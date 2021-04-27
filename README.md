@@ -1,4 +1,4 @@
-# Car detection with yolo v4
+# Car detection with YOLO v4
 This repository contains code for car detection using YOLOv4 algorithm, that was pre-trained on COCO dataset by AlexeyAB.
 
 The yolov4 python package was implemented in TensotFlow2: https://github.com/sicara/tf2-yolov4.
