@@ -7,6 +7,7 @@ Detected cars are marked by bounding boxes.
 
 There are two main functions to preform object detection - one for video and one for still images.
 
+The 'Photos' folder contains the photos and videos before and after car detection. It also contains a JSON file with the bounding box coordinates.
 
 
 
