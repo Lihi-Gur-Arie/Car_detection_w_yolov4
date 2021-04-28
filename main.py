@@ -7,7 +7,6 @@ from matplotlib.backends.backend_agg import FigureCanvasAgg
 from matplotlib.figure import Figure
 from tf2_yolov4.anchors import YOLOV4_ANCHORS
 from tf2_yolov4.model import YOLOv4
-import json
 import cv2
 import numpy as np
 
@@ -47,7 +46,7 @@ def trained_yolov4_model():
     model.load_weights('yolov4.h5')
     return model
 
-def detected_photo(boxes, scores, classes, detections,image, save_json = False):
+def detected_photo(boxes, scores, classes, detections,image):
     boxes = (boxes[0] * [WIDTH, HEIGHT, WIDTH, HEIGHT]).astype(int)
     scores = scores[0]
     classes = classes[0].astype(int)
@@ -68,9 +67,7 @@ def detected_photo(boxes, scores, classes, detections,image, save_json = False):
     ]
     ########################################################################
 
-    # Create an empty dictionary for the JSON input_video_name
-    objects = {}
-    obj_counter = 1
+
     image_cv = image.numpy()
 
     for (xmin, ymin, xmax, ymax), score, class_idx in zip(boxes, scores, classes):
@@ -86,22 +83,12 @@ def detected_photo(boxes, scores, classes, detections,image, save_json = False):
                 cv2.putText(image_cv, text, (int(xmin), int(ymin) - 5),
                             cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0,255,0), 2)
 
-                ### Creat a dictionary for boxes, to convert to JSON later  ###################
-                objects[f'Object{" "+str(obj_counter)}, bounding box'] = (xmin, ymin, xmax, ymax)
-                obj_counter  += 1
-
-    ##################
-    # Save to JSON input_video_name:
-    if save_json == True:
-        with open(image + '_Objects.txt', 'w') as outfile:
-            json.dump(objects, outfile)
-
     return image_cv
 
 def proccess_frame(photo, model):
     images = resize_image(photo)
     boxes, scores, classes, detections = model.predict(images)
-    result_img = detected_photo(boxes, scores, classes, detections,images[0], save_json = False)
+    result_img = detected_photo(boxes, scores, classes, detections,images[0])
     return result_img
 
 def Car_detection_single_photo(input_photo):
@@ -143,15 +130,15 @@ if __name__ == "__main__":
 
     ####    Detect Cars on a single photo ####
 
-    # output_image = Car_detection_single_photo(input_photo ='photos/test3.jpg')
-    #
-    # # Show resulted photo
-    # cv2.imshow('output_image', output_image)
-    # cv2.waitKey(3000)
-    # cv2.destroyAllWindows()
-    #
-    # # Save photo
-    # cv2.imwrite('photos/test3_object_detected.jpg', output_image*255)
+    output_image = Car_detection_single_photo(input_photo ='photos/test3.jpg')
 
-#####   Detect Cars on a video and save ######
+    # Show resulted photo
+    cv2.imshow('output_image', output_image)
+    cv2.waitKey(3000)
+    cv2.destroyAllWindows()
+
+    # Save photo
+    cv2.imwrite('photos/test3_object_detected.jpg', output_image*255)
+
+####   Detect Cars on a video and save ######
     Car_detection_video(input_video_name='photos/car_chase_01.mp4', output_video_name ='photos/delete.avi', frames_to_save = 20)
